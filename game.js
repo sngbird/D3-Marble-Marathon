@@ -4,7 +4,7 @@ class Test extends Phaser.Scene {
     }
     preload(){
         this.load.image('playermarble', "assets/marble.png");
-        this.load.image('platform', "assets/platformtrim.png");
+        this.load.image('platform', "assets/platformfull.png");
 
 
     }
@@ -17,10 +17,19 @@ class Test extends Phaser.Scene {
         // ground.setColor = "#9ff07a";
         //this.matter.add.image(this.w/2.0, this.h/2, 'platform');
         let player = this.matter.add.sprite(500,50,'playermarble');
+        player.setCircle(430);
+        //let player = this.matter.add.circle(500,50,32);
+
         player.setScale(.05);
-       let ground = this.matter.add.image(500, 500, 'platform', null, { isStatic: true });
+        player.setBounce(1);
+       let ground = this.add.image(500, 500, 'platform', null, { isStatic: true });
         ground.Height = 50;
-    
+        //this.map = this.make.tilemap({ key: 'map' });
+        const path = '-350 0 -350 75 100 125 450 75 450 0'
+        let verts = this.matter.verts.fromPath(path);
+        console.log(verts);
+        let fromvert = this.matter.add.fromVertices(500,545, verts, {isStatic: true}, true, .01, 10);
+      
     }
 }
 
