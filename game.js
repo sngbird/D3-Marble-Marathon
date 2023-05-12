@@ -2,7 +2,7 @@ class Test extends Phaser.Scene {
     constructor() {
         super('test');
         let player;
-       //let constraint;
+        let constraint;
     }
     preload(){
         this.load.image('playermarble', "assets/marble1.png");
@@ -52,32 +52,34 @@ class Test extends Phaser.Scene {
         let fromvert2 = this.matter.add.fromVertices(ground2.x,ground2.y+45, verts, {isStatic: true,}, true, .01, 10);
     
         
-        let constraint = Phaser.Physics.Matter.Matter.Constraint.create({
+        this.constraint = Phaser.Physics.Matter.Matter.Constraint.create({
             pointA: {x: 700, y: 400},
             bodyB: this.player.body,
             length: 1,
-            stiffness: .5
+            stiffness: .7
         });
 
       
         
-        this.matter.world.add(constraint);
+        this.matter.world.add(this.constraint);
         let slingshot = this.matter.add.mouseSpring();
-        this.player.on('pointerdown', function(pointer, constriant){
-            constraint.pointA = {x: pointer.x, y: pointer.y};
-        })
+        this.player.on('pointerdown', function(pointer,){
+            this.constraint.pointA = {x: pointer.x, y: pointer.y};
+        },this )
         this.input.on('pointerup', function(pointer){
-            setTimeout(() =>{constraint.pointA = null}, 10);
-        })
+            setTimeout(() =>{this.constraint.pointA = null}, 10);
+        },this)
     
  
 
     }
     update(){
         
-        if(this.player.body.speed > 5){
-           this.player.body.speed = 5;
-           console.log(this.player.body.speed);
+        if(this.player.body.speed > 1){
+           //this.player.body.setVelocity(body, {x: 1, y:1});
+           this.player.body.velocity = {x: 1, y: 1};
+           this.player.body.speed = 1;
+           console.log(this.player.body.velocity);
            //this.constraint.pointA = null; 
         
         }
