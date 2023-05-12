@@ -106,11 +106,12 @@ class Intro extends Phaser.Scene {
         .setWordWrapWidth(this.w * 0.5 - 2 * this.s);    
         
     
-    this.input.on('pointerdown', function(pointer){
-        this.cameras.main.fade(1000, 0, 0, 0);
-        this.time.delayedCall(1000, () => {
-        this.scene.start('level1',);
-        });},this)
+    // this.input.on('pointerdown', function(pointer){
+    //     this.cameras.main.fade(1000, 0, 0, 0);
+    //     this.time.delayedCall(1000, () => {
+    //     this.scene.start('level1',);
+    //     });},this)
+    this.input.on('pointerdown', () => gotoScene(this,'level1'),this);
     //this.input.on('pointerdown', function(){gotoScene('test')},this);
     }
     
@@ -161,8 +162,8 @@ class Level1 extends Phaser.Scene {
     }
 }
 function gotoScene(scene,key) {
-    scene.cameras.main.fade(2000, 0, 0, 0);
-    scene.time.delayedCall(2000, () => {
+    scene.cameras.main.fade(1000, 0, 0, 0);
+    scene.time.delayedCall(1000, () => {
         scene.scene.start(key);
     });
 }
