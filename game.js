@@ -88,7 +88,7 @@ class Intro extends Phaser.Scene {
     this.s = this.game.config.width * 0.01;
     this.cameras.main.setBackgroundColor('#444');
         //Create Platform
-    makePlatform(this,this.w/2, this.h/2,'platform');
+    makePlatformBig(this,this.w/2, this.h/2,'platform');
 
     for(let i = 1; i< 9; i++){
         let marble = new Marble(this, this.w/2,this.h/2-25, 'marble2')
@@ -130,6 +130,8 @@ class Level1 extends Phaser.Scene {
         this.load.image('marble3', "assets/marble3.png");
         this.load.image('marble4', "assets/marble4.png");
         this.load.image('platform', "assets/platformfull.png");
+        this.load.image('door', "assets/door.png");
+
 
 
     }
@@ -139,7 +141,7 @@ class Level1 extends Phaser.Scene {
         this.s = this.game.config.width * 0.01;
         this.cameras.main.setBackgroundColor('#444');
         this.player = new Player(this, 700,600,'marble1');
-        this.matter.world.setBounds(0,-500, this.w,this.h*2);
+        this.matter.world.setBounds(0,0, this.w,this.h*2);
 
          //Add the Slingshot
          this.constraint = Phaser.Physics.Matter.Matter.Constraint.create({
@@ -156,9 +158,12 @@ class Level1 extends Phaser.Scene {
         this.input.on('pointerup', function(pointer){
             setTimeout(() =>{this.constraint.pointA = null}, 10);
         },this)
-        makePlatform(this,300,700,'platform');
-        makePlatform(this,1050,700,'platform');
-        makePlatform(this,1600,700,'platform');
+        makePlatformBig(this,300,700,'platform');
+        makePlatformBig(this,1050,700,'platform');
+        makePlatformBig(this,1600,700,'platform');
+        //makePlatformSmall(this,500,200,'platform');
+        let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
+        let goal = new GoalPoint(this,this.w*.95,650,'door');
     }
 }
 function gotoScene(scene,key) {
@@ -168,16 +173,53 @@ function gotoScene(scene,key) {
     });
 }
 
-function makePlatform(scene,x,y,spriteTexture){
+function makePlatformBig(scene,x,y,spriteTexture){
     this.ground =  scene.add.image(x, y, 'platform', null, { isStatic: true });
     this.path = '-350 0 -350 75 100 125 450 75 450 0'
     this.verts = scene.matter.verts.fromPath(path);
     this.fromvert = scene.matter.add.fromVertices(ground.x,ground.y+45, verts, {isStatic: true,}, true, .01, 10)
 }
+
+function makePlatformSmall(scene,x,y,spriteTexture){
+    this.ground =  scene.add.image(x, y, 'platform', null, { isStatic: true });
+    this.ground.setScale(.5);
+    this.path = '-175 0 -175 37.5 50 62.5 225 37.5 225 0'
+
+    this.verts = scene.matter.verts.fromPath(path);
+    this.fromvert = scene.matter.add.fromVertices(ground.x,ground.y+22.5, verts, {isStatic: true,}, true, .01, 10)
+}
 // function createSlingshot(pointA, body){
 
 // }
 
+class RestartButton extends Phaser.GameObjects.Text{
+    constructor(scene, x, y, text){
+        super(scene,x,y)
+            this.setText("Restart Level")
+            this.setStyle({ fontSize: `${24}px` })
+            this.setInteractive().on('pointerdown',() => gotoScene(scene,scene));
+            scene.add.existing(this);
+        }
+}
+
+class GoalPoint extends Phaser.Physics.Matter.Sprite{
+    constructor(scene,x,y,image){
+        super(scene.matter.world, x, y, 'door');
+        this.setScale(.5)
+        this.setStatic(true);
+        
+        scene.add.existing(this);
+    }
+}
+
+// class GoalPoint extends Phaser.GameObjects{
+//     constructor(scene,x,y,width,height){
+//         super(scene, x, y, width,height);
+//         this.goal = scene.matter.add.rectangle(x,y,width,height, {isStatic: true});
+        
+//         scene.add.existing(this);
+//     }
+// }
 
 class Marble extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, spriteTexture,) {
@@ -226,17 +268,18 @@ const game = new Phaser.Game({
     physics: {
         default: 'matter',
         matter: {
+            wireframes: false,
             enableSleeping: true,
             gravity: {
                 y: 3
             },
             debug: {
                 showBody: true,
-                showStaticBody: true
+                //showStaticBody: true
             }
         }
     },
-    scene: [Intro,Level1],
+    scene: [Level1],
 
     title: "Marble Marathon",
 });
