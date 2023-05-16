@@ -38,7 +38,7 @@ class Test extends Phaser.Scene {
             pointA: {x: 700, y: 600},
             bodyB: this.player.body,
             length: 1,
-            stiffness: .5
+            stiffness: .4
         });
         this.matter.world.add(this.constraint);
         let slingshot = this.matter.add.mouseSpring();
@@ -46,7 +46,7 @@ class Test extends Phaser.Scene {
             this.constraint.pointA = {x: pointer.x, y: pointer.y};
         },this )
         this.input.on('pointerup', function(pointer){
-            setTimeout(() =>{this.constraint.pointA = null}, 10);
+            setTimeout(() =>{this.constraint.pointA = null}, 20);
         },this)
         
         let restart = this.add.text(this.w*.05,this.h*.9)
@@ -140,30 +140,247 @@ class Level1 extends Phaser.Scene {
         this.h = this.game.config.height;
         this.s = this.game.config.width * 0.01;
         this.cameras.main.setBackgroundColor('#444');
-        this.player = new Player(this, 700,600,'marble1');
+        this.player = new Player(this, this.w*.1 ,this.h*.7,'marble1');
         this.matter.world.setBounds(0,0, this.w,this.h*2);
 
          //Add the Slingshot
          this.constraint = Phaser.Physics.Matter.Matter.Constraint.create({
-            pointA: {x: 700, y: 600},
+            pointA: {x: this.w*.1, y: this.h*.65},
             bodyB: this.player.body,
             length: 1,
-            stiffness: .5
+            stiffness: .4
         });
         this.matter.world.add(this.constraint);
         let slingshot = this.matter.add.mouseSpring();
         this.player.on('pointerdown', function(pointer,){
-            this.constraint.pointA = {x: pointer.x, y: pointer.y};
+            this.constraint.pointA = {x: pointer.x, y: pointer.y-50};
         },this )
         this.input.on('pointerup', function(pointer){
             setTimeout(() =>{this.constraint.pointA = null}, 10);
         },this)
-        makePlatformBig(this,300,700,'platform');
-        makePlatformBig(this,1050,700,'platform');
-        makePlatformBig(this,1600,700,'platform');
-        //makePlatformSmall(this,500,200,'platform');
+        makePlatformBig(this,300,800,'platform');
+        makePlatformBig(this,1050,600,'platform');
+        makePlatformBig(this,1600,600,'platform');
+        makePlatformSmall(this,1050,400,'platform');
+        makePlatformSmall(this,1800,200,'platform');
+
+        //let ramp = this.physics.add.triangle(100,100,)
+      
+
         let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
-        let goal = new GoalPoint(this,this.w*.95,650,'door');
+        let goal = new GoalPoint(this,this.w*.95,150,'door');
+        this.player.setOnCollideWith(goal,() => {
+            gotoScene(this,'level2');
+        },this)
+        this.add.text(this.w/3,this.h*.05, 'Launch Marble into the door to Advance').setStyle({ fontSize: `${24}px` });
+    }
+    update(){
+        
+    }
+}
+
+class Level2 extends Phaser.Scene {
+    constructor() {
+        super('level2');
+        let player;
+        let constraint;
+    }
+    preload(){
+        this.load.image('marble1', "assets/marble1.png");
+        this.load.image('marble2',"assets/marble2.png");
+        this.load.image('marble3', "assets/marble3.png");
+        this.load.image('marble4', "assets/marble4.png");
+        this.load.image('platform', "assets/platformfull.png");
+        this.load.image('door', "assets/door.png");
+
+
+
+    }
+    create(){
+        this.w = this.game.config.width;
+        this.h = this.game.config.height;
+        this.s = this.game.config.width * 0.01;
+        this.cameras.main.setBackgroundColor('#444');
+        this.player = new Player(this, this.w*.1 ,this.h*.7,'marble1');
+        this.matter.world.setBounds(0,0, this.w,this.h*2);
+
+         //Add the Slingshot
+         this.constraint = Phaser.Physics.Matter.Matter.Constraint.create({
+            pointA: {x: this.w*.1, y: this.h*.65},
+            bodyB: this.player.body,
+            length: 1,
+            stiffness: .4
+        });
+        this.matter.world.add(this.constraint);
+        let slingshot = this.matter.add.mouseSpring();
+        this.player.on('pointerdown', function(pointer,){
+            this.constraint.pointA = {x: pointer.x, y: pointer.y-50};
+        },this )
+        this.input.on('pointerup', function(pointer){
+            setTimeout(() =>{this.constraint.pointA = null}, 10);        
+
+        },this)
+        makePlatformSmall(this,200,800,'platform');
+        makePlatformSmall(this,950,700,'platform');
+        makePlatformSmall(this,950,200,'platform');
+
+        makePlatformSmall(this,1800,800,'platform');
+        makePlatformSmall(this,1800,500,'platform');
+
+ 
+
+        //let ramp = this.physics.add.triangle(100,100,)
+      
+
+        let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
+        let goal = new GoalPoint(this,this.w*.95,750,'door');
+        this.player.setOnCollideWith(goal,() => {
+            gotoScene(this,'test');
+        },this)
+        this.add.text(this.w/3,this.h*.05, 'Launch Marble into the door to Advance').setStyle({ fontSize: `${24}px` });
+    }
+    update(){
+        
+    }
+}
+
+class Level3 extends Phaser.Scene {
+    constructor() {
+        super('level3');
+        let player;
+        let constraint;
+        let saved = 0;
+        
+    }
+    preload(){
+        this.load.image('marble1', "assets/marble1.png");
+        this.load.image('marble2',"assets/marble2.png");
+        this.load.image('marble3', "assets/marble3.png");
+        this.load.image('marble4', "assets/marble4.png");
+        this.load.image('platform', "assets/platformfull.png");
+        this.load.image('door', "assets/door.png");
+
+
+
+    }
+    create(){
+        this.w = this.game.config.width;
+        this.h = this.game.config.height;
+        this.s = this.game.config.width * 0.01;
+        this.cameras.main.setBackgroundColor('#444');
+        this.player = new Player(this, this.w*.1 ,this.h*.7,'marble1');
+        this.matter.world.setBounds(0,0, this.w,this.h*2);
+        let goal = new GoalPoint(this,this.w*.95,750,'door');
+        this.saved = 0;
+         //Add the Slingshot
+         this.constraint = Phaser.Physics.Matter.Matter.Constraint.create({
+            pointA: {x: this.w*.1, y: this.h*.65},
+            bodyB: this.player.body,
+            length: 1,
+            stiffness: .4
+        });
+        this.matter.world.add(this.constraint);
+        let slingshot = this.matter.add.mouseSpring();
+        this.player.on('pointerdown', function(pointer,){
+            this.constraint.pointA = {x: pointer.x, y: pointer.y-50};
+        },this )
+        this.input.on('pointerup', function(pointer){
+            setTimeout(() =>{this.constraint.pointA = null}, 10);        
+
+        },this)
+        // makePlatformSmall(this,200,800,'platform');
+        // makePlatformSmall(this,950,700,'platform');
+        // makePlatformSmall(this,950,200,'platform');
+
+        // makePlatformSmall(this,1800,800,'platform');
+        // makePlatformSmall(this,1800,500,'platform');
+
+        makePlatformBig(this,300,800,'platform');
+        makePlatformSmall(this,200,500,'platform');
+        let marble1 = new Marble(this,210,475,'marble2');
+        marble1.setOnCollideWith(goal,() => {
+            this.saved += 1;
+            marble1.destroy();
+        },this)
+        makePlatformSmall(this,1400,150,'platform');
+        let marble2 = new Marble(this,1425,125,'marble2');
+        marble2.setOnCollideWith(goal,() => {
+            this.saved += 1;
+            marble2.destroy();
+        },this)
+        makePlatformBig(this,1050,800,'platform');
+        let marble3 = new Marble(this,1050,775,'marble2');
+        marble3.setOnCollideWith(goal,() => {
+            this.saved += 1;
+            marble3.destroy();
+        },this)
+        makePlatformBig(this,1600,800,'platform');
+
+        //let ramp = this.physics.add.triangle(100,100,)
+      
+
+        let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
+        
+        this.player.setOnCollideWith(goal,() => {
+            if(this.saved == 3){
+                gotoScene(this,'credits');
+            }
+        },this)
+        this.add.text(this.w/4,this.h*.05, 'Knock other marbles into the door, then collide with it to win').setStyle({ fontSize: `${24}px` });
+    }
+    update(){
+        
+    }
+}
+
+class Credits extends Phaser.Scene {
+    constructor() {
+        super('credits');
+    }
+    preload(){
+        this.load.image('marble1', "assets/marble1.png");
+        this.load.image('marble2',"assets/marble2.png");
+        this.load.image('marble3', "assets/marble3.png");
+        this.load.image('marble4', "assets/marble4.png");
+        this.load.image('platform', "assets/platformfull.png");
+        this.load.image('door', "assets/door.png");
+    }
+    create(){
+        this.w = this.game.config.width;
+        this.h = this.game.config.height;
+        this.s = this.game.config.width * 0.01;
+        this.cameras.main.setBackgroundColor('#444');
+        let titlebox = this.matter.add.rectangle(970,200,600,150, {isStatic: true,});
+        let logit = this.add.text(700, 170, 'Marble Madness').setStyle({ fontSize: `${64}px` });
+        let creditbox = this.matter.add.rectangle(950,600,1400,400, {isStatic: true,});
+        let credit1 = this.add.text(300, 470, 'A short physics based game by Lumina Kinsinger-Dang. Github: Sngbird').setStyle({ fontSize: `${32}px` });
+        let credit2 = this.add.text(400, 570, 'Written on Phaser, with the Matter Physics engine').setStyle({ fontSize: `${32}px` });
+        let credit3 = this.add.text(400, 670, 'Assets Generated by Me using Krita').setStyle({ fontSize: `${32}px` });
+        this.matter.world.setBounds(0,0, this.w,this.h);
+        let marble1 = new Marble(this,210,75,'marble2');
+        marble1.setFrictionAir(0);
+        marble1.setBounce(1.01);
+        let marble2 = new Marble(this,210,70,'marble1');
+        marble2.setFrictionAir(0);
+        marble2.setBounce(1.01);
+        let marble3 = new Marble(this,410,70,'marble3');
+        marble3.setFrictionAir(0);
+        marble3.setBounce(1.01);
+        let marble4 = new Marble(this,410,70,'marble4');
+        marble3.setFrictionAir(0);
+        marble3.setBounce(1.01);
+        for (let i = 0; i < 100; i++){
+            let marble_i = new Marble(this,410+(i*10), 70, 'marble2');
+            //marble_i.setFriction(0);
+            marble_i.setFrictionAir(0);
+            marble_i.setBounce(1.04);
+        }
+        for (let j = 0; j < 100; j++){
+            let marble_j = new Marble(this,410+(j*10), 650, 'marble1');
+            marble_j.setFrictionAir(0);
+            marble_j.setBounce(1.04);
+        }
+
     }
 }
 function gotoScene(scene,key) {
@@ -273,13 +490,13 @@ const game = new Phaser.Game({
             gravity: {
                 y: 3
             },
-            debug: {
-                showBody: true,
-                //showStaticBody: true
-            }
+            // debug: {
+            //     //showBody: true,
+            //     //showStaticBody: true
+            // }
         }
     },
-    scene: [Level1],
+    scene: [Intro,Level1,Level2,Level3,Credits],
 
     title: "Marble Marathon",
 });
