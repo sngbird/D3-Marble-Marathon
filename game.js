@@ -1,3 +1,5 @@
+let g_restarts = 0;
+let g_level = 0;
 class Test extends Phaser.Scene {
     constructor() {
         super('test');
@@ -165,12 +167,12 @@ class Level1 extends Phaser.Scene {
         makePlatformSmall(this,1800,200,'platform');
 
         //let ramp = this.physics.add.triangle(100,100,)
-      
+        g_level = 1;
 
         let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
         let goal = new GoalPoint(this,this.w*.95,150,'door');
         this.player.setOnCollideWith(goal,() => {
-            gotoScene(this,'level2');
+            gotoScene(this,'between');
         },this)
         this.add.text(this.w/3,this.h*.05, 'Launch Marble into the door to Advance').setStyle({ fontSize: `${24}px` });
     }
@@ -226,7 +228,7 @@ class Level2 extends Phaser.Scene {
 
         makePlatformSmall(this,1800,800,'platform');
         makePlatformSmall(this,1800,500,'platform');
-
+        g_level = 2;
  
 
         //let ramp = this.physics.add.triangle(100,100,)
@@ -235,7 +237,7 @@ class Level2 extends Phaser.Scene {
         let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
         let goal = new GoalPoint(this,this.w*.95,750,'door');
         this.player.setOnCollideWith(goal,() => {
-            gotoScene(this,'test');
+            gotoScene(this,'between');
         },this)
         this.add.text(this.w/3,this.h*.05, 'Launch Marble into the door to Advance').setStyle({ fontSize: `${24}px` });
     }
@@ -318,12 +320,12 @@ class Level3 extends Phaser.Scene {
 
         //let ramp = this.physics.add.triangle(100,100,)
       
-
+        g_level = 3;
         let restartbutton = new RestartButton(this,this.w*.1,this.h*.9);
         
         this.player.setOnCollideWith(goal,() => {
             if(this.saved == 3){
-                gotoScene(this,'credits');
+                gotoScene(this,'between');
             }
         },this)
         this.add.text(this.w/4,this.h*.05, 'Knock other marbles into the door, then collide with it to win').setStyle({ fontSize: `${24}px` });
@@ -383,6 +385,44 @@ class Credits extends Phaser.Scene {
 
     }
 }
+class Between extends Phaser.Scene {
+    constructor() {
+        super('between');
+    }
+    preload(){
+        this.load.image('marble1', "assets/marble1.png");
+        this.load.image('marble2',"assets/marble2.png");
+        this.load.image('marble3', "assets/marble3.png");
+        this.load.image('marble4', "assets/marble4.png");
+        this.load.image('platform', "assets/platformfull.png");
+        this.load.image('door', "assets/door.png");
+    }
+    create(){
+        this.w = this.game.config.width;
+        this.h = this.game.config.height;
+        this.s = this.game.config.width * 0.01;
+        this.cameras.main.setBackgroundColor('#444');
+        this.add.text(this.w*.3,this.h*.4, 'Restarted '+g_restarts+' times.').setStyle({ fontSize: `${64}px` });
+        this.matter.world.setBounds(0,0, this.w,this.h);
+        for (let i = 0; i < 100; i++){
+            let marble_i = new Marble(this,410+(i*10), 70, 'marble2');
+            //marble_i.setFriction(0);
+            marble_i.setFrictionAir(0);
+            marble_i.setBounce(1.04);
+        }
+        if(g_level == 1){
+            setTimeout(() => {gotoScene(this,'level2');}, 2000)
+        }
+        if(g_level == 2){
+            setTimeout(() => {gotoScene(this,'level3');}, 2000)
+        }
+        if(g_level == 3){
+            setTimeout(() => {gotoScene(this,'credits');}, 2000)
+        }
+        
+    }
+}
+
 function gotoScene(scene,key) {
     scene.cameras.main.fade(1000, 0, 0, 0);
     scene.time.delayedCall(1000, () => {
@@ -414,7 +454,7 @@ class RestartButton extends Phaser.GameObjects.Text{
         super(scene,x,y)
             this.setText("Restart Level")
             this.setStyle({ fontSize: `${24}px` })
-            this.setInteractive().on('pointerdown',() => gotoScene(scene,scene));
+            this.setInteractive().on('pointerdown',() => {gotoScene(scene,scene); g_restarts+=1;});
             scene.add.existing(this);
         }
 }
@@ -496,7 +536,6 @@ const game = new Phaser.Game({
             // }
         }
     },
-    scene: [Intro,Level1,Level2,Level3,Credits],
-
+    scene: [Intro,Level1,Between,Level2,Level3,Credits],
     title: "Marble Marathon",
 });
