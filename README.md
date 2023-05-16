@@ -1,11 +1,11 @@
 # D3-Marble-Marathon
 
-Link:
+Link to Play: https://sngbird.github.io/D3-Marble-Marathon/
 
 
 
 Assets:
-The marbles were pictures of actual marbles that i had, and edited in Krita,
+The marbles were pictures of actual marbles that I had, and edited in Krita,
 the Platform and Door assets I drew myself in krita.
 
 
